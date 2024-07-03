@@ -1,0 +1,4 @@
+torch
+glob2  # glob está incluido en la biblioteca estándar de Python, pero glob2 puede ofrecer funcionalidad extendida
+argparse  # argparse está incluido en la biblioteca estándar de Python para versiones 2.7 y 3.2+
+pyyaml

@@ -1,0 +1,50 @@
+model:
+  class: src.models.mnist_model.MNISTModel
+  args: {}
+
+optimizer:
+  class: torch.optim.Adam
+  args:
+    params: ${model.parameters()}
+    lr: 0.001
+
+criterion:
+  class: torch.nn.NLLLoss
+
+device:
+  class: torch.device
+  args:
+    device: ${'cuda' if torch.cuda.is_available() else 'cpu'}
+
+metrics:
+  accuracy:
+    class: src.utils.metrics.accuracy_metric
+  f1_score:
+    class: src.utils.metrics.f1_score_metric
+
+data_loader:
+  class: src.models.mnist_model.get_mnist_data
+  args:
+    batch_size: 64
+    valid_batch_size: 1000
+
+callbacks:
+  model_checkpoint:
+    class: src.utils.callbacks.ModelCheckpoint
+    args:
+      filepath: model_{epoch:02d}-{valid_loss:.2f}.pth
+      monitor: valid_loss
+      save_best_only: True
+      mode: min
+      period: 1
+  early_stopping:
+    class: src.utils.callbacks.EarlyStopping
+    args:
+      monitor: valid_loss
+      min_delta: 0.001
+      patience: 5
+      mode: min
+
+log_dir: runs/mnist_experiment
+epochs: 5
+valid_freq: 0.5
